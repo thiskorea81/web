@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<title>캔버스</title>
+</head>
+<body>
+	<p>Sin함수</p>
+	<canvas id="myCanvas" width="400" height="300"></canvas>
+	<script>
+		var c = document.getElementById("myCanvas");
+		var ctx = c.getContext("2d");
+		ctx.strokeStyle = "#FF0000"
+		ctx.moveTo(0, 150);
+		ctx.lineTo(400, 150);
+		ctx.stroke();
+
+		ctx.moveTo(200, 0);
+		ctx.lineTo(200, 300);
+		ctx.stroke();
+
+		for(x=0; x<400; x=x+5){
+			xx=x-200;
+			//y=-(xx+10)+150;    //일차함수
+			y=100*Math.sin(xx/50)+150;  //사인함수
+
+			ctx.fillStyle = "dark-green";
+			ctx.fillRect(x, y, 5, 5); //시작점, 가로길이, 세로길이
+		}
+	</script>
+<p>일차함수</p>
+<canvas id="myCanvas2" width="400" height="300"></canvas>
+
+<script>
+	var c = document.getElementById("myCanvas2");
+	var ctx = c.getContext("2d");
+	ctx.strokeStyle = "#FF0000"
+	ctx.moveTo(0, 150);
+	ctx.lineTo(400, 150);
+	ctx.stroke();
+
+	ctx.moveTo(200, 0);
+	ctx.lineTo(200, 300);
+	ctx.stroke();
+
+	for(x=0; x<400; x=x+5){
+		xx=x-200;
+		y=-(xx+10)+150;    //일차함수
+
+		ctx.fillStyle = "dark-green";
+		ctx.fillRect(x, y, 5, 5); //시작점, 가로길이, 세로길이
+	}
+</script>
+
+<p>통계 그래프</p>
+<canvas id="myCanvas3" width="400" height="300"></canvas>
+
+<script>
+	var c = document.getElementById("myCanvas3");
+	var ctx = c.getContext("2d");
+	ctx.strokeStyle = "#FF0000"
+	ctx.moveTo(0, 70);
+	ctx.lineTo(400, 70);
+	ctx.stroke();
+
+	ctx.moveTo(30, 0);
+	ctx.lineTo(30, 300);
+	ctx.stroke();
+
+	scoreKor=[95, 65, 78, 46, 69];
+
+	for(n=0; n<5; n=n+1){
+		x=n*30+30;
+		y=scoreKor[n];    //일차함수
+
+		ctx.fillStyle = "orange";
+		ctx.fillRect(x, 70, 15, y); //시작점, 가로길이, 세로길이
+	}
+</script>
+
+</body>
+</html>

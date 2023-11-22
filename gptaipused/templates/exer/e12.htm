@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>허프만 인코딩</title>
+    <style>
+        #container {
+            width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>허프만 인코딩</h1>
+        <label for="frequencies">A-G 출현 빈도:</label>
+        <input type="text" id="frequencies" placeholder="예: 100,140,110,50,70,15,130">
+        <button onclick="buildHuffmanTree()">트리 만들기</button>
+        <label for="word">단어 입력:</label>
+        <input type="text" id="word" placeholder="단어 입력">
+        <button onclick="encode()">인코딩</button>
+        <p id="result"></p>
+        <pre id="codeTable"></pre>
+    </div>
+    <script>
+        class Node {
+            constructor(freq, alphabet) {
+                this.freq = freq;
+                this.alphabet = alphabet;
+                this.leftNode = null;
+                this.rightNode = null;
+            }
+        }
+
+        class MinHeap {
+            constructor() {
+                this.tree = [null];
+            }
+
+            insert(n) {
+                this.tree.push(n);
+                let childPos = this.tree.length - 1;
+                let parentPos = Math.floor(childPos / 2);
+
+                while (parentPos >= 1 && this.tree[childPos].freq < this.tree[parentPos].freq) {
+                    [this.tree[childPos], this.tree[parentPos]] = [this.tree[parentPos], this.tree[childPos]];
+                    childPos = parentPos;
+                    parentPos = Math.floor(childPos / 2);
+                }
+            }
+
+            extractMinNode() {
+                if (this.tree.length <= 1) return null;
+
+                const min = this.tree[1];
+                const top = this.tree.length - 1;
+
+                this.tree[1] = this.tree[top];
+                this.tree.pop();
+
+                let parentPos = 1;
+                let leftPos = parentPos * 2;
+                let rightPos = parentPos * 2 + 1;
+
+                while (leftPos <= this.tree.length - 1) {
+                    let targetPos;
+                    if (rightPos > this.tree.length - 1) {
+                        if (this.tree[leftPos].freq >= this.tree[parentPos].freq) break;
+                        targetPos = leftPos;
+                    } else {
+                        if (this.tree[leftPos].freq >= this.tree[parentPos].freq &&
+                            this.tree[rightPos].freq >= this.tree[parentPos].freq) break;
+
+                        targetPos = (this.tree[leftPos].freq < this.tree[rightPos].freq) ? leftPos : rightPos;
+                    }
+
+                    [this.tree[targetPos], this.tree[parentPos]] = [this.tree[parentPos], this.tree[targetPos]];
+
+                    parentPos = targetPos;
+                    leftPos = parentPos * 2;
+                    rightPos = parentPos * 2 + 1;
+                }
+                return min;
+            }
+        }
+
+        let huffmanTree = null;
+        let codes = {};
+
+        function buildHuffmanTree() {
+            const freqInput = document.getElementById('frequencies').value.split(',').map(Number);
+            const frequency = {'A': freqInput[0], 'B': freqInput[1], 'C': freqInput[2], 'D': freqInput[3], 'E': freqInput[4], 'F': freqInput[5], 'G': freqInput[6]};
+
+            const mh = new MinHeap();
+
+            for (const key in frequency) {
+                mh.insert(new Node(frequency[key], key));
+            }
+
+            while (true) {
+                const leftChild = mh.extractMinNode();
+                const rightChild = mh.extractMinNode();
+
+                huffmanTree = new Node(leftChild.freq + rightChild.freq, '.');
+
+                huffmanTree.leftNode = leftChild;
+                huffmanTree.rightNode = rightChild;
+
+                if (mh.tree.length <= 1) break;
+
+                mh.insert(huffmanTree);
+            }
+
+            function traverse(node, code = '') {
+                if (node.alphabet !== '.') {
+                    codes[node.alphabet] = code;
+                } else {
+                    traverse(node.leftNode, code + '0');
+                    traverse(node.rightNode, code + '1');
+                }
+            }
+
+            traverse(huffmanTree);
+
+            document.getElementById('codeTable').innerText = '코드표:\n' + JSON.stringify(codes, null, 2);
+        }
+
+        function encode() {
+            const word = document.getElementById('word').value;
+            const result = word.split('').map(char => codes[char]).join('');
+            document.getElementById('result').innerText = '허프만 코드: ' + result;
+        }
+    </script>
+</body>
+</html>

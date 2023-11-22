@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>자리 배치 프로그램</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+  }
+  header {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  section {
+    flex: 4;
+    display: flex;
+  }
+  .left-section, .right-section {
+    padding: 1em;
+    border: 1px solid #ddd;
+    overflow-y: auto;  /* Add scroll if content overflows */
+  }
+  .left-section {
+    flex: 3;
+  }
+  .right-section {
+    flex: 2;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  td, th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  .left-section table tr {
+    height: calc((100vh - 15em) / 5);  /* Adjust the denominator according to your number of rows */
+  }
+  .right-section table tr {
+    height: calc((100vh - 15em) / 30);  /* Adjust the denominator according to your number of rows */
+  }
+  .left-section table td, .left-section table th {
+    font-size: 20px;  /* Adjust this value to increase or decrease the font size in the seat arrangement table */
+  }
+  .right-section table td, .right-section table th {
+    font-size: 6px;  /* Adjust this value to increase or decrease the font size in the student list table */
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h2 id="header">자리 배치 프로그램</h2>
+</header>
+
+<section>
+    <div class="left-section">
+      <h3>자리 배치:</h3>
+      <input type="file" id="csvFile" accept=".csv" />
+      <button onclick="upload()">Upload</button>
+      <button onclick="shuffleSeats()">Shuffle</button>
+      <br>
+      Rows: <input type="number" id="rows" min="1" value="5">
+      Columns: <input type="number" id="columns" min="1" value="6">
+      <br>
+      Empty Seat Row: <input type="number" id="emptySeatRow" min="1" value="1">
+      Empty Seat Column: <input type="number" id="emptySeatColumn" min="1" value="1">
+      <br>
+      Front Seat Students: <input type="text" id="frontSeatStudents" placeholder="Comma separated student numbers">
+      <br>
+      <table id="seatTable">
+      </table>
+    </div>
+
+    <div class="right-section">
+      <h3>학생 명단:</h3>
+      <table id="studentList">
+        <thead>
+          <tr>
+            <th>학번</th>
+            <th>이름</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+</section>
+
+<script>
+  let students = []; // This will store the student list globally
+
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function upload() {
+    const file = document.getElementById('csvFile').files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+      const csvData = event.target.result;
+      const rows = csvData.split('\n');
+
+      // Extract students from the csv file
+      students = rows.map(row => {
+        const [number, name] = row.split(',');
+        return { number, name };
+      });
+
+      // Placeholder for empty seats
+      for (let i = students.length; i < 30; i++) {
+        students.push({ number: '--------', name: '' });
+      }
+
+      createStudentList();
+    };
+
+    reader.readAsText(file);
+  }
+
+  function shuffleSeats() {
+    const rows = parseInt(document.getElementById('rows').value);
+    const columns = parseInt(document.getElementById('columns').value);
+    const emptySeatRow = parseInt(document.getElementById('emptySeatRow').value);
+    const emptySeatColumn = parseInt(document.getElementById('emptySeatColumn').value);
+    const frontSeatStudents = document.getElementById('frontSeatStudents').value.split(',');
+
+    const table = document.getElementById('seatTable');
+    table.innerHTML = ''; // Clear the existing table
+
+    // Separate empty seats from the students array
+    const emptySeats = students.filter(student => student.number === '--------');
+    const nonEmptySeats = students.filter(student => student.number !== '--------');
+
+    // Separate front seat students
+    const backSeatStudents = nonEmptySeats.filter(student => !frontSeatStudents.includes(student.number));
+    const shuffledFrontSeatStudents = shuffleArray(nonEmptySeats.filter(student => frontSeatStudents.includes(student.number)));
+
+    // Shuffle back seat students array for seat assignment
+    const seatedStudents = shuffleArray([...backSeatStudents]);
+
+    // Put the front seat students at the end of the array
+    seatedStudents.push(...shuffledFrontSeatStudents);
+
+    // Ensure that the specified position is always an empty seat
+    seatedStudents.splice((emptySeatRow - 1) * columns + (emptySeatColumn - 1), 0, emptySeats[0]);
+
+    for (let i = 0; i < rows; i++) {
+        const row = document.createElement('tr');
+        for (let j = 0; j < columns; j++) {
+            const cell = document.createElement('td');
+            const studentIndex = i * columns + j;
+            cell.textContent = `${seatedStudents[studentIndex].number}: ${seatedStudents[studentIndex].name}`;
+            row.appendChild(cell);
+        }
+        table.appendChild(row);
+    }
+  }
+
+  function createStudentList() {
+    const list = document.getElementById('studentList').getElementsByTagName('tbody')[0];
+    list.innerHTML = ''; // Clear the existing list
+
+    // Copy and sort students array for list, remove placeholders
+    const listStudents = [...students].filter(student => student.number !== '--------');
+    listStudents.sort((a, b) => a.number - b.number);
+
+    for (let i = 0; i < listStudents.length; i++) {
+      const row = document.createElement('tr');
+      const numberCell = document.createElement('td');
+      numberCell.textContent = listStudents[i].number;
+      const nameCell = document.createElement('td');
+      nameCell.textContent = listStudents[i].name;
+      row.appendChild(numberCell);
+      row.appendChild(nameCell);
+      list.appendChild(row);
+    }
+  }
+</script>
+</body>
+</html>

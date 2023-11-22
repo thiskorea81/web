@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<title>10진수, 2진수, 보수</title>
+</head>
+<body>
+    
+
+<div class="container">
+  <h1>진수 변환 Number System Converter</h1>
+  
+  <div class="conversion">
+    <h2>10진수를 2진수, 8진수, 16진수로 Convert Decimal to Binary, Octal, Hexadecimal</h2>
+    <input type="number" id="decimalInput" placeholder="Enter a decimal number">
+    <button onclick="convertDecimal()">변환 Convert</button>
+    <p id="decimalOutput"></p>
+</div>
+  
+  <div class="conversion">
+      <h2>2진수를 10진수, 8진수, 16진수로 Convert Binary to Decimal, Octal, Hexadecimal</h2>
+      <input type="text" id="binaryInput" placeholder="Enter a binary number">
+      <button onclick="convertBinary()">변환 Convert</button>
+      <p id="binaryOutput"></p>
+  </div>
+
+  <div class="conversion">
+    <h2>8진수를 2진수, 10진수, 16진수로 Convert Octal to Binary, Decimal, Hexadecimal</h2>
+    <input type="text" id="octalInput" placeholder="Enter an octal number">
+    <button onclick="convertOctal()">변환 Convert</button>
+    <p id="octalOutput"></p>
+  </div>
+
+  <div class="conversion">
+    <h2>16진수를 2진수, 10진수, 8진수로 Convert Hexadecimal to Binary, Decimal, Octal</h2>
+    <input type="text" id="hexadecimalInput2" placeholder="Enter a hexadecimal number">
+    <button onclick="convertHexadecimal2()">변환 Convert</button>
+    <p id="hexadecimalOutput2"></p>
+  </div>
+</div>
+
+<script>
+
+function convertDecimal() {
+      let decimal = document.getElementById("decimalInput").value;
+      let binary = parseInt(decimal, 10).toString(2);
+      let octal = parseInt(decimal, 10).toString(8);
+      let hexadecimal = parseInt(decimal, 10).toString(16);
+      document.getElementById("decimalOutput").innerHTML = `2진수 Binary: ${binary}, 8진수 Octal: ${octal}, 16진수 Hexadecimal: ${hexadecimal}`;
+  }
+
+  function convertBinary() {
+      let binary = document.getElementById("binaryInput").value;
+      let decimal = parseInt(binary, 2);
+      let octal = parseInt(binary, 2).toString(8);
+      let hexadecimal = parseInt(binary, 2).toString(16);
+      document.getElementById("binaryOutput").innerHTML = `10진수 Decimal: ${decimal}, 8진수 Octal: ${octal}, 16진수 Hexadecimal: ${hexadecimal}`;
+  }
+
+  function convertOctal() {
+      let octal = document.getElementById("octalInput").value;
+      let binary = parseInt(octal, 8).toString(2);
+      let decimal = parseInt(octal, 8);
+      let hexadecimal = parseInt(octal, 8).toString(16);
+      document.getElementById("octalOutput").innerHTML = `2진수 Binary: ${binary}, 10진수 Decimal: ${decimal}, 16진수 Hexadecimal: ${hexadecimal}`;
+  }
+
+  function convertHexadecimal2() {
+      let hexadecimal = document.getElementById("hexadecimalInput2").value;
+      let binary = parseInt(hexadecimal, 16).toString(2);
+      let decimal = parseInt(hexadecimal, 16);
+      let octal = parseInt(hexadecimal, 16).toString(8);
+      document.getElementById("hexadecimalOutput2").innerHTML = `2진수 Binary: ${binary}, 10진수 Decimal: ${decimal}, 8진수 Octal: ${octal}`;
+  }
+</script>
+</body>
+</html> 

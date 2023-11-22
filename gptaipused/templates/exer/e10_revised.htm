@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Round Robin Scheduler</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../styles.css">
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+
+<h2>Enter Process Details</h2>
+
+<table id="processTable">
+  <tr>
+    <th>프로세스 Process</th>
+    <th>도착시간 Arrival Time</th> 
+    <th>실행시간 Burst Time</th>
+  </tr>
+  <tr>
+    <td>P1</td>
+    <td><input type="text" id="arrival1" value="0"></td>
+    <td><input type="text" id="burst1" value="1"></td>
+  </tr>
+  <tr>
+    <td>P2</td>
+    <td><input type="text" id="arrival2" value="1"></td>
+    <td><input type="text" id="burst2" value="2"></td>
+  </tr>
+  <tr>
+    <td>P3</td>
+    <td><input type="text" id="arrival3" value="2"></td>
+    <td><input type="text" id="burst3" value="3"></td>
+  </tr>
+  <tr>
+    <td>P4</td>
+    <td><input type="text" id="arrival4" value="3"></td>
+    <td><input type="text" id="burst4" value="4"></td>
+  </tr>
+  <tr>
+    <td>P5</td>
+    <td><input type="text" id="arrival5" value="4"></td>
+    <td><input type="text" id="burst5" value="5"></td>
+  </tr>
+</table>
+
+<h3>Enter Time Quantum</h3>
+<input type="text" id="timeQuantum" value="4">
+
+<button onclick="calculate()">Calculate</button>
+
+<h2>Results</h2>
+<table id="resultsTable">
+  <tr>
+    <th>프로세스 Process</th>
+    <th>반환시간 Turnaround Time</th> 
+    <th>대기시간 Waiting Time</th>
+  </tr>
+</table>
+
+<div id="averages"></div>
+
+<script>
+  // Round Robin algorithm
+  function calculate() {
+    document.getElementById("resultsTable").innerHTML = "<tr><th>프로세스 Process</th><th>반환시간 Turnaround Time</th><th>대기시간 Waiting Time</th></tr>";
+
+    var timeQuantum = parseInt(document.getElementById("timeQuantum").value);
+    var processes = [];
+    for (let i = 1; i <= 5; i++) {
+      var arrival = parseInt(document.getElementById("arrival" + i).value);
+      var burst = parseInt(document.getElementById("burst" + i).value);
+      processes.push({ name: 'P' + i, arrival: arrival, burst: burst, remaining: burst });
+    }
+
+    processes.sort((a, b) => a.arrival - b.arrival || a.burst - b.burst);
+
+    var time = 0;
+    var totalTurnaround = 0;
+    var totalWait = 0;
+
+    while (processes.length > 0) {
+      var process = processes.shift();
+      var waitTime = time - process.arrival;
+      var runTime = Math.min(timeQuantum, process.remaining);
+      time += runTime;
+      process.remaining -= runTime;
+
+      if (process.remaining > 0) {
+        // if process is not finished, add it back to the queue
+        processes.push(process);
+      } else {
+        // if process is finished, calculate turnaround time and add to the results table
+        var turnaroundTime = time - process.arrival;
+        totalTurnaround += turnaroundTime;
+        totalWait += waitTime;
+
+        var row = document.createElement("tr");
+        row.innerHTML = "<td>" + process.name + "</td><td>" + turnaroundTime + "</td><td>" + waitTime + "</td>";
+        document.getElementById("resultsTable").appendChild(row);
+      }
+
+      // sort by arrival time, then by remaining burst time
+      processes.sort((a, b) => a.arrival - b.arrival || a.burst - b.burst);
+    }
+
+    var averages = document.getElementById("averages");
+    averages.innerHTML = "Average Turnaround Time: " + (totalTurnaround / 5) + "<br>Average Wait Time: " + (totalWait / 5);
+  }
+</script>
+
+</body>
+</html>

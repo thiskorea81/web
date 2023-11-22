@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>개선된 반복 길이 인코딩</title>
+    <style>
+        #container {
+            width: 300px;
+            margin: auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>개선된 반복 길이 인코딩</h1>
+        <label for="inputData">원본 데이터:</label>
+        <input type="text" id="inputData" placeholder="데이터 입력">
+        <button onclick="encode()">인코딩</button>
+        <p id="result"></p>
+    </div>
+    <script>
+        function encode() {
+            var input = document.getElementById('inputData').value;
+            var result = '';
+            var count = 1;
+
+            for (var i = 0; i < input.length; i++) {
+                if (input[i] === input[i + 1]) {
+                    count++;
+                } else {
+                    // 한 번 등장하는 데이터에 대해서는 횟수를 표시하지 않음
+                    result += input[i] + (count > 1 ? count : '');
+                    count = 1;
+                }
+            }
+
+            document.getElementById('result').innerText = '압축 데이터: ' + result;
+        }
+    </script>
+</body>
+</html>

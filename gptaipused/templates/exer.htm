@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>CSS Template</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Create two columns/boxes that floats next to each other */
+nav {
+  float: left;
+  width: 20%;
+  height: 600px; /* only for demonstration, should be removed */
+  background: #ccc;
+  padding: 20px;
+}
+
+/* Style the list inside the menu */
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+article {
+  float: left;
+  padding: 0px;
+  width: 80%;
+  background-color: #f1f1f1;
+  height: 600px; /* only for demonstration, should be removed */
+}
+
+/* Clear floats after the columns */
+section::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
+@media (max-width: 600px) {
+  nav, article {
+    width: 100%;
+    height: auto;
+  }
+}
+</style>
+</head>
+<body>
+<section>
+  <nav>
+    <ul>
+      <li><a href="exer/e1.htm" target="art">사칙연산</a></li>
+      <li><a href="exer/e2.htm" target="art">그림판</a></li>
+      <li><a href="exer/e3.htm" target="art">캔버스</a></li>
+      <li><a href="test_2.htm" target="art">수행평가 연습문제</a></li>
+      <br>
+      <li><a href="exer/e4.htm" target="art">2-2-1 이진수변환기</a></li>
+      <li><a href="exer/e4-1.htm" target="art">2-2-2 ip주소, 색상</a></li>
+      <li><a href="exer/e5.htm" target="art">2-3-1 이진수뺄셈</a></li>
+      <li><a href="exer/e6.htm" target="art">2-3-2 아스키코드(10진수, 2진수)</a></li>
+      <li><a href="exer/e7.htm" target="art">2-3-2 아스키코드와 16진수</a></li>
+      <li><a href="exer/e8.htm" target="art">4-1-2 자원관리(FCFS)</a></li>
+      <li><a href="exer/e9.htm" target="art">4-1-2 자원관리(SJF)</a></li>
+      <li><a href="exer/e10.htm" target="art">4-1-2 자원관리(RR)</a></li>
+      <br>
+      <li><a href="test_2-1.htm".htm" target="art">(형성평가) 2-1 10진수->2진수</a></li>
+      <li><a href="test_2-2.htm" target="art">(형성평가) 2-2 2진수->10진수</a></li>
+      <li><a href="test_2-3.htm" target="art">(형성평가) 2-3 2진수->16진수</a></li>
+      <li><a href="test_2-4.htm" target="art">(형성평가) 2-4 16진수->2진수</a></li>
+      <li><a href="test_2-5.htm" target="art">(형성평가) 2-5 ipv4(10진수->2진수)</a></li>
+      <li><a href="test_2-6.htm" target="art">(형성평가) 2-6 ipv4(2진수->10진수)</a></li>
+      <li><a href="test_2-7.htm" target="art">(형성평가) 2-7 색상변환(10진수->16진수)</a></li>
+      <li><a href="test_2-8.htm" target="art">(형성평가) 2-8 색상변환(16진수->10진수)</a></li>
+      <br>
+      <li><a href="/class/seatTable.htm" target="art">(학급) 자리배치</a></li>
+      <li><a href="/class/cleanRoom.htm" target="art">(학급) 청소배치</a></li>
+    </ul>
+  </nav>
+  
+  <article>
+    <iframe height="600px" width="100%" id="fr01" name="art">
+      <p>iframe</p>
+    </iframe>
+  </article>
+</section>
+</body>
+</html>
+

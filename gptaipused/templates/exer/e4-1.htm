@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<title>ip주소 변환, 색상 변환</title>
+<style>
+    #colorBox {
+      width: 100px;
+      height: 100px;
+      margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+    
+<div class="container">
+  <h1>ip 주소 변환 및 색상 변환</h1>
+  
+  <div class="conversion">
+      <h2>IP 주소 변환(10진수를 2진수, 16진수로)</h2>
+      <input id="ip" type="text" placeholder="Enter IP address 예:192.168.0.1">
+      <button onclick="convertIP()">Convert IP</button>
+      <p id="binaryOutput"></p>
+      <p id="hexOutputIP"></p>
+  </div>
+  
+  <div class="conversion">
+      <h2>색상 변환(10진수를 16진수로)</h2>
+      <label for="r">R: </label><input id="r" type="number" min="0" max="255">
+      <label for="g">G: </label><input id="g" type="number" min="0" max="255">
+      <label for="b">B: </label><input id="b" type="number" min="0" max="255">
+      <button onclick="convertToHex()">Convert Color</button>
+      <p id="hexOutputColor"></p>
+      <div id="colorBox"></div>
+  </div>
+</div>
+
+<script>
+    // Convert a decimal number to binary
+    function convertToBinary(decimal) {
+        return decimal.toString(2).padStart(8, '0');  // pad with leading zeros to make it 8-bit
+    }
+
+    // Convert a decimal number to hexadecimal
+    function convertToHexadecimal(decimal) {
+        return decimal.toString(16).padStart(2, '0');  // pad with leading zeros to make it two characters
+    }
+
+    function convertIP() {
+        let ipv4 = document.getElementById('ip').value;
+
+        let binaryParts = ipv4.split('.').map(part => convertToBinary(parseInt(part)));
+        document.getElementById('binaryOutput').innerHTML = `Binary: ${binaryParts.join('.')}`;
+
+        let hexadecimalParts = ipv4.split('.').map(part => convertToHexadecimal(parseInt(part)));
+        document.getElementById('hexOutputIP').innerHTML = `Hexadecimal: ${hexadecimalParts.join('.')}`;
+    }
+
+    function convertToHex() {
+        let r = document.getElementById('r').value;
+        let g = document.getElementById('g').value;
+        let b = document.getElementById('b').value;
+
+        // Convert each value to hexadecimal
+        r = parseInt(r).toString(16).padStart(2, '0');
+        g = parseInt(g).toString(16).padStart(2, '0');
+        b = parseInt(b).toString(16).padStart(2, '0');
+
+        let hexColor = "#" + r + g + b;
+
+        // Output the hexadecimal color
+        document.getElementById('hexOutputColor').innerHTML = `Hexadecimal: ${hexColor}`;
+
+        // Change the color of the box
+        document.getElementById('colorBox').style.backgroundColor = hexColor;
+    }
+</script>
+</body>
+</html>

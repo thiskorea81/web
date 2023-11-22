@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> presentation 1</title>
+    <link rel="stylesheet" href="styles_test.css">
+</head>
+
+<body>
+    <p>
+    <form>
+    <label for="xNum">x Num:</label><br>
+    <input type="text" id="xNum" name="xxNum"><br>
+    <label for="yNum">y Num:</label><br>
+    <input type="text" id="yNum" name="yyNum"><br>
+    <input type="button" onclick="cal()" value="계산"><br>
+    </form>
+    </p>
+    <p id="demo1"></p>
+    <p id="demo2"></p>
+    <p id="demo3"></p>
+    <p id="demo4"></p>
+    <img src="img/pre1_1.png" alt="pre1" width="1000" height="800"><br>
+    <img src="img/pre1_2.png" alt="pre2" width="1000" height="800"><br>
+        
+    <script>
+    
+    function cal(){
+        x=document.getElementById("xNum").value;
+        y=document.getElementById("yNum").value;
+    
+        x=Number(x);
+        y=Number(y);
+        
+        document.getElementById("demo1").innerHTML="덧셈결과: "+(x+y);
+        document.getElementById("demo2").innerHTML="뺄셈결과: "+(x-y);
+        document.getElementById("demo3").innerHTML="곱셈결과: "+(x*y);
+        document.getElementById("demo4").innerHTML="나눗셈결과: "+(x/y);
+    }
+    </script>
+</body>
+
+</html>

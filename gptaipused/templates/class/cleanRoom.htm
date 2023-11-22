@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>청소 구역 배치 프로그램</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 15px;
+    text-align: left;
+  }
+</style>
+</head>
+<body>
+
+<h2>청소 구역 배치 프로그램</h2>
+<h5>1열에 번호, 2열에 이름을 가진 csv파일을 업로드하시오</h5>
+<input type="file" id="csvFile" accept=".csv" />
+<p>반장 학생 번호: <input type="text" id="classPresident"></p>
+<p>부반장 학생 번호: <input type="text" id="classVicePresident"></p>
+<p>학교 분리수거 학생 번호: <input type="text" id="recyclingStudent"></p>
+<p>칠판 및 교실 부착물 정리 학생 번호: <input type="text" id="classroomCleanupStudent"></p>
+<button onclick="assignCleaningTasks()">배치 시작</button>
+<h3>청소 배치 결과:</h3>
+<table id="cleaningTasks">
+</table>
+
+<script>
+  let students = []; 
+
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function assignCleaningTasks() {
+    const file = document.getElementById('csvFile').files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+      const csvData = event.target.result;
+      const rows = csvData.split('\n');
+
+      // Extract students from the csv file
+      students = rows.map(row => {
+        const [number, name] = row.split(',');
+        return { number, name };
+      });
+
+      // Get the special task students
+      const classPresidentNumber = document.getElementById('classPresident').value;
+      const classVicePresidentNumber = document.getElementById('classVicePresident').value;
+      const recyclingStudentNumber = document.getElementById('recyclingStudent').value;
+      const classroomCleanupStudentNumber = document.getElementById('classroomCleanupStudent').value;
+      
+      const specialStudents = {
+        '반장 - 교실 쓸기': students.find(student => student.number === classPresidentNumber),
+        '부반장 - 특별구역': students.find(student => student.number === classVicePresidentNumber),
+        '학교 분리수거': students.find(student => student.number === recyclingStudentNumber),
+        '칠판 및 교실 부착물 정리': students.find(student => student.number === classroomCleanupStudentNumber)
+      }
+
+      // Remove the special task students from the main students list
+      students = students.filter(student => ![classPresidentNumber, classVicePresidentNumber, recyclingStudentNumber, classroomCleanupStudentNumber].includes(student.number));
+      
+      // Define the cleaning tasks
+      const cleaningTasks = {
+        '교실 쓸기': 7,  // Class president is already assigned
+        '교실 대걸레': 4,
+        '창틀': 4,
+        '복도': 2,
+        '분리수거': 4,
+        '특별구역': 4  // Class vice president is already assigned
+      }
+
+      // Shuffle the students array
+      students = shuffleArray(students);
+      
+      // Create the cleaning tasks table
+      const table = document.getElementById('cleaningTasks');
+      table.innerHTML = ''; // Clear the existing table
+
+      // Add the class president and vice president to their respective tasks
+      for (let student in specialStudents) {
+        const row = document.createElement('tr');
+        const taskCell = document.createElement('td');
+        taskCell.textContent = student;
+        row.appendChild(taskCell);
+
+        const studentCell = document.createElement('td');
+        studentCell.textContent = `${specialStudents[student].number}: ${specialStudents[student].name}`;
+        row.appendChild(studentCell);
+        table.appendChild(row);
+      }
+
+      // Assign the cleaning tasks
+      for (let task in cleaningTasks) {
+        const row = document.createElement('tr');
+        const taskCell = document.createElement('td');
+        taskCell.textContent = task;
+        row.appendChild(taskCell);
+
+        for (let i = 0; i < cleaningTasks[task]; i++) {
+          const studentCell = document.createElement('td');
+          studentCell.textContent = `${students[i].number}: ${students[i].name}`;
+          row.appendChild(studentCell);
+        }
+
+        students = students.slice(cleaningTasks[task]);
+        table.appendChild(row);
+      }
+
+      // List students that did not get a task
+      const unassignedRow = document.createElement('tr');
+      const unassignedCell = document.createElement('td');
+      unassignedCell.textContent = "미배정 학생";
+      unassignedRow.appendChild(unassignedCell);
+
+      for (let student of students) {
+        const studentCell = document.createElement('td');
+        studentCell.textContent = `${student.number}: ${student.name}`;
+        unassignedRow.appendChild(studentCell);
+      }
+
+      table.appendChild(unassignedRow);
+    };
+
+    reader.readAsText(file);
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<title>2진수 IPv4 주소를 10진수로 변환 퀴즈</title>
+<style>
+    .wrong {
+        color: red;
+    }
+    .correct {
+        color: blue;
+    }
+</style>
+</head>
+<body>
+    
+<div class="container">
+  <h1>2진수 IPv4 주소를 10진수로 변환 퀴즈</h1>
+
+  <label for="numQuestions">문제 개수 입력: </label><input id="numQuestions" type="number" min="1">
+  <button onclick="generateQuestions()">문제 생성</button>
+  
+  <div id="questions">
+      <!-- 여기에 문제가 삽입됩니다 -->
+  </div>
+  
+  <button onclick="checkAnswers()">정답 확인</button>
+  <button id="retryButton" onclick="retryAnswers()" style="display: none;">틀린 문제 다시 풀기</button>
+  <button id="resetButton" onclick="resetQuestions()" style="display: none;">새 문제 생성</button>
+  
+  <table id="resultsTable">
+      <!-- 여기에 결과가 삽입됩니다 -->
+  </table>
+  
+</div>
+
+<script>
+    // 임의의 2진수 IPv4 주소를 생성
+    function generateBinaryIPv4() {
+        let binaryIPv4 = [];
+        for (let i = 0; i < 4; i++) {
+            binaryIPv4.push(Math.floor(Math.random() * 256).toString(2).padStart(8, '0'));  // 각 부분은 8비트 2진수
+        }
+        return binaryIPv4.join('.');
+    }
+
+    // 2진수를 10진수로 변환
+    function convertBinaryToDecimal(binary) {
+        return parseInt(binary, 2);
+    }
+
+    // 문제를 생성하고 페이지에 삽입
+    function generateQuestions() {
+        let numQuestions = document.getElementById('numQuestions').value;
+        if (numQuestions < 1) {
+            alert("문제의 개수를 양수로 입력해주세요.");
+            return;
+        }
+        document.getElementById('questions').innerHTML = "";
+        for (let i = 0; i < numQuestions; i++) {
+            let binaryIPv4 = generateBinaryIPv4();
+            let decimalIPv4 = binaryIPv4.split('.').map(part => convertBinaryToDecimal(part)).join('.');
+            let questionHTML = `
+                <div class="question">
+                    <p>${i+1}. 2진수 IPv4 주소 ${binaryIPv4}를 10진수로 변환하시오:</p>
+                    <input type="text" id="answer${i}">
+                    <p id="correctAnswer${i}" style="display: none;">${decimalIPv4}</p>
+                </div>
+            `;
+            document.getElementById('questions').innerHTML += questionHTML;
+        }
+        document.getElementById("retryButton").style.display = "block";
+    }
+
+    // 사용자의 답을 확인하고 메시지를 표시
+    function checkAnswers() {
+        let resultsTable = document.getElementById('resultsTable');
+        resultsTable.innerHTML = "<tr><th>문제 번호</th><th>결과</th></tr>";
+        let numQuestions = document.getElementById('numQuestions').value;
+        for (let i = 0; i < numQuestions; i++) {
+            let userAnswer = document.getElementById(`answer${i}`).value;
+            let correctAnswer = document.getElementById(`correctAnswer${i}`).innerText;
+            let resultRow = document.createElement('tr');
+            resultRow.innerHTML = `<td>${i+1}</td><td>${userAnswer.toLowerCase() === correctAnswer ? 'O' : 'X'}</td>`;
+            if (userAnswer.toLowerCase() !== correctAnswer) {
+                resultRow.classList.add('wrong');
+            }
+            resultsTable.appendChild(resultRow);
+        }
+        document.getElementById("resetButton").style.display = "block";
+    }
+
+    // 틀린 답안을 재도전
+    function retryAnswers() {
+        let numQuestions = document.getElementById('numQuestions').value;
+        for (let i = 0; i < numQuestions; i++) {
+            let userAnswer = document.getElementById(`answer${i}`).value;
+            let correctAnswer = document.getElementById(`correctAnswer${i}`).innerText;
+            if (userAnswer.toLowerCase() !== correctAnswer) {
+                document.getElementById(`answer${i}`).value = "";
+            } else {
+                document.getElementById(`answer${i}`).classList.add('correct');
+            }
+        }
+        document.getElementById("retryButton").style.display = "none";
+    }
+
+    // 문제를 초기화
+    function resetQuestions() {
+        document.getElementById('questions').innerHTML = "";
+        document.getElementById('resultsTable').innerHTML = "";
+        document.getElementById("resetButton").style.display = "none";
+    }
+
+</script>
+</body>
+</html>

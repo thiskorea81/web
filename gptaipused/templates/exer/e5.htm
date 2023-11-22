@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<title>2진수 뺄셈</title>
+</head>
+
+<body>
+  <h1>10진수를 2진수로 변환(1의 보수, 2의 보수 포함) Decimal to Binary Converter</h1>
+    <label for="decimal">10진수를 입력하세요 Enter a decimal number:</label>
+    <input id="decimal" type="text">
+    <button onclick="convertToBinary()">변환 Convert</button>
+    <div id="result"></div>
+  
+    <script>
+      function convertToBinary() {
+        let decimal = document.getElementById('decimal').value;
+        if (decimal === '' || isNaN(decimal)) {
+          alert('Please enter a valid decimal number.');
+          return;
+        }
+  
+        // Convert to binary
+        let isNegative = false;
+        if (decimal < 0) {
+          isNegative = true;
+          decimal = Math.abs(decimal);
+        }
+        let binary = (decimal >>> 0).toString(2);
+  
+        // Add sign bit
+        binary = isNegative ? '1' + binary : '0' + binary;
+        
+        // Calculate 1's complement
+        const onesComplement = binary.split('').map(bit => bit === '1' ? '0' : '1').join('');
+  
+        // Calculate 2's complement
+        let twosComplement = onesComplement.split('');
+        for (let i = twosComplement.length - 1; i >= 0; i--) {
+          if (twosComplement[i] === '1') {
+            twosComplement[i] = '0';
+          } else {
+            twosComplement[i] = '1';
+            break;
+          }
+        }
+        twosComplement = twosComplement.join('');
+  
+        // Display results
+        document.getElementById('result').innerHTML = `
+          <p>2진수 Binary: ${binary}</p>
+          <p>1의 보수 1's Complement: ${onesComplement}</p>
+          <p>2의 보수 2's Complement: ${twosComplement}</p>
+        `;
+      }
+    </script>
+
+  <h1>보수를 이용한 2진수 뺄셈 Binary Subtraction Using Complements</h1>
+  <label for="minuend">피감수 Enter the minuend (binary number):</label>
+  <input id="minuend" type="text">
+  <p></p>
+  <label for="subtrahend">감수 Enter the subtrahend (binary number):</label>
+  <input id="subtrahend" type="text">
+  <p></p>
+  <button onclick="subtractUsingOnesComplement()">1의 보수를 이용한 뺄셈 Subtract Using 1's Complement</button>
+  <div id="result1"></div>
+  <p></p>
+  <button onclick="subtractUsingTwosComplement()">2의 보수를 이용한 뺄셈 Subtract Using 2's Complement</button>
+  <div id="result2"></div>
+  
+  <script>
+    function subtractUsingOnesComplement() {
+      const minuend = document.getElementById('minuend').value;
+      const subtrahend = document.getElementById('subtrahend').value;
+
+      if (minuend === '' || subtrahend === '' || !isBinary(minuend) || !isBinary(subtrahend)) {
+        alert('2진수를 넣으세요 Please enter valid binary numbers.');
+        return;
+      }
+
+      // Calculate 1's complement of the subtrahend
+      const onesComplement = subtrahend.split('').map(bit => bit === '1' ? '0' : '1').join('');
+
+      // Add minuend and 1's complement of the subtrahend
+      let result = binaryAdd(minuend, onesComplement);
+      let carry = result.length > minuend.length;
+
+      // Prepare the steps
+      let steps = [
+        `1's Complement of ${subtrahend} = ${onesComplement}`,
+        `Add ${minuend} and ${onesComplement} = ${carry ? result.slice(1) : result} with a carry of ${carry ? '1' : '0'}`
+      ];
+
+      if (carry) {
+        // If there is a carry, add it to the result
+        result = binaryAdd(result.slice(1), '1');
+        steps.push(`Add the carry = ${result}`);
+      } else {
+        // If there isn't a carry, take 1's complement of the result and add a negative sign
+        let complement = result.split('').map(bit => bit === '1' ? '0' : '1').join('');
+        result = '-' + complement;
+        steps.push(`Take 1's Complement of ${complement.split('').map(bit => bit === '1' ? '0' : '1').join('')} = ${complement}`);
+      }
+
+      // Display results
+      document.getElementById('result1').innerHTML = `
+        Result using 1's Complement: ${result} <br>
+        <br>
+        Steps: <br>
+        ${steps.join('<br>')}
+      `;
+    }
+
+    function subtractUsingTwosComplement() {
+      const minuend = document.getElementById('minuend').value;
+      const subtrahend = document.getElementById('subtrahend').value;
+
+      if (minuend === '' || subtrahend === '' || !isBinary(minuend) || !isBinary(subtrahend)) {
+        alert('Please enter valid binary numbers.');
+        return;
+      }
+
+      // Calculate 2's complement of the subtrahend
+      let twosComplement = subtrahend.split('').map(bit => bit === '1' ? '0' : '1').join('');
+      twosComplement = binaryAdd(twosComplement, '1');
+
+      // Add minuend and 2's complement of the subtrahend
+      let result = binaryAdd(minuend, twosComplement);
+      let carry = result.length > minuend.length;
+
+      // Prepare the steps
+      let steps = [
+        `2's Complement of ${subtrahend} = ${twosComplement}`,
+        `Add ${minuend} and ${twosComplement} = ${carry ? result.slice(1) : result} with a carry of ${carry ? '1' : '0'}`
+      ];
+
+      if (carry) {
+        // If there is a carry, discard it
+        result = result.slice(1);
+        steps.push(`Discard the carry = ${result}`);
+      } else {
+        // If there isn't a carry, take 2's complement of the result and add a negative sign
+        let complement = binaryAdd(result.split('').map(bit => bit === '1' ? '0' : '1').join(''), '1');
+        result = '-' + complement;
+        steps.push(`Take 2's Complement of ${binaryAdd(complement.split('').map(bit => bit === '1' ? '0' : '1').join(''), '1')} = ${complement}`);
+      }
+
+      // Display results
+      document.getElementById('result2').innerHTML = `
+        Result using 2's Complement: ${result} <br>
+        <br>
+        Steps: <br>
+        ${steps.join('<br>')}
+      `;
+    }
+
+    // Binary addition function
+    function binaryAdd(a, b) {
+      let carry = 0;
+      let result = '';
+      let lengthDiff = a.length - b.length;
+
+      // Make both binary numbers of equal length
+      if (lengthDiff > 0) {
+        for (let i = 0; i < lengthDiff; i++) {
+          b = '0' + b;
+        }
+      } else if (lengthDiff < 0) {
+        for (let i = 0; i < Math.abs(lengthDiff); i++) {
+          a = '0' + a;
+        }
+      }
+
+      for (let i = a.length - 1; i >= 0; i--) {
+        let sum = parseInt(a[i]) + parseInt(b[i]) + carry;
+        result = (sum % 2) + result;
+        carry = Math.floor(sum / 2);
+      }
+
+      if (carry) {
+        result = carry + result;
+      }
+
+      return result;
+    }
+
+    // Check if the input is a binary number
+    function isBinary(number) {
+      for (let i = 0; i < number.length; i++) {
+        if (number[i] !== '0' && number[i] !== '1') {
+          return false;
+        }
+      }
+
+      return true;
+    }
+  </script>
+</body>
+</html>

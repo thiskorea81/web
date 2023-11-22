@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CPU Scheduler</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../styles.css">
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+
+<h2>Enter Process Details</h2>
+
+<table id="processTable">
+  <tr>
+    <th>프로세스 Process</th>
+    <th>도착시간 Arrival Time</th> 
+    <th>실행시간 Burst Time</th>
+  </tr>
+  <tr>
+    <td>P1</td>
+    <td><input type="text" id="arrival1" value="0"></td>
+    <td><input type="text" id="burst1" value="10"></td>
+  </tr>
+  <tr>
+    <td>P2</td>
+    <td><input type="text" id="arrival2" value="1"></td>
+    <td><input type="text" id="burst2" value="28"></td>
+  </tr>
+  <tr>
+    <td>P3</td>
+    <td><input type="text" id="arrival3" value="2"></td>
+    <td><input type="text" id="burst3" value="6"></td>
+  </tr>
+  <tr>
+    <td>P4</td>
+    <td><input type="text" id="arrival4" value="3"></td>
+    <td><input type="text" id="burst4" value="4"></td>
+  </tr>
+  <tr>
+    <td>P5</td>
+    <td><input type="text" id="arrival5" value="4"></td>
+    <td><input type="text" id="burst5" value="14"></td>
+  </tr>
+</table>
+
+<button onclick="calculate()">Calculate</button>
+
+<h2>Results</h2>
+<table id="resultsTable">
+  <tr>
+    <th>프로세스 Process</th>
+    <th>반환시간 Turnaround Time</th> 
+    <th>대기시간 Waiting Time</th>
+  </tr>
+</table>
+
+<div id="averages"></div>
+
+<h2>Calculation Details</h2>
+<div id="calculationDetails"></div>
+
+<h2>Gantt Chart</h2>
+<div id="chart_div"></div>
+
+<script>
+  google.charts.load('current', {'packages':['timeline']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function calculate() {
+    // Clear the results table first
+    document.getElementById("resultsTable").innerHTML = "<tr><th>프로세스 Process</th><th>반환시간 Turnaround Time</th><th>대기시간 Waiting Time</th></tr>";
+    document.getElementById("calculationDetails").innerHTML = "";
+    var totalTurnaround = 0;
+    var totalWaiting = 0;
+    var processes = [];
+    var chartData = [];
+
+    for (let i = 1; i <= 5; i++) {
+      // Get arrival and burst time for each process from the input fields
+      var arrival = parseInt(document.getElementById("arrival" + i).value);
+      var burst = parseInt(document.getElementById("burst" + i).value);
+
+      processes.push({id: 'P'+i, arrival: arrival, burst: burst });
+    }
+
+    processes.sort((a, b) => a.arrival - b.arrival || a.burst - b.burst);
+
+    var time = 0;
+
+    while(processes.length > 0) {
+      var nextProcessIndex = 0;
+
+      for(var i=0; i < processes.length; i++) {
+        if(processes[i].arrival > time) {
+          break;
+        }
+
+        if(processes[i].burst < processes[nextProcessIndex].burst) {
+          nextProcessIndex = i;
+        }
+      }
+
+      var start = Math.max(time, processes[nextProcessIndex].arrival);
+      time = start + processes[nextProcessIndex].burst;
+      var end = time;
+
+      var turnaround = end - processes[nextProcessIndex].arrival;
+      var waiting = start - processes[nextProcessIndex].arrival;
+
+      var resultsTable = document.getElementById("resultsTable");
+      var row = resultsTable.insertRow(-1);
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      cell1.innerHTML = processes[nextProcessIndex].id;
+      cell2.innerHTML = turnaround;
+      cell3.innerHTML = waiting;
+
+      totalTurnaround += turnaround;
+      totalWaiting += waiting;
+
+      document.getElementById("calculationDetails").innerHTML += `<p>${processes[nextProcessIndex].id} : Start - ${start}, End - ${end}, Turnaround - ${turnaround}, Waiting - ${waiting}</p>`;
+
+      chartData.push([processes[nextProcessIndex].id, new Date(0, 0, 0, 0, 0, start), new Date(0, 0, 0, 0, 0, end)]);
+
+      processes.splice(nextProcessIndex, 1);
+    }
+
+    var averageTurnaround = totalTurnaround / 5;
+    var averageWaiting = totalWaiting / 5;
+
+    document.getElementById("averages").innerHTML = "Average turnaround time: " + averageTurnaround + "<br>Average waiting time: " + averageWaiting;
+
+    var chart = new google.visualization.Timeline(document.getElementById('chart_div'));
+    var dataTable = new google.visualization.DataTable();
+    dataTable.addColumn({ type: 'string', id: 'Process' });
+    dataTable.addColumn({ type: 'date', id: 'Start' });
+    dataTable.addColumn({ type: 'date', id: 'End' });
+    dataTable.addRows(chartData);
+
+    var options = {
+      height: 400,
+      width: window.innerWidth-20,  // Set chart width to the browser window width
+      gantt: {
+        trackHeight: 30
+      }
+    };
+    chart.draw(dataTable, options);
+  }
+
+  // Redraw chart when window is resized
+  window.addEventListener('resize', drawChart);
+</script>
+
+</body>
+</html>
