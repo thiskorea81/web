@@ -110,9 +110,9 @@
     color: aliceblue;
   }
 
-  #card1, #card2, #card3, #card4, #card5, #card6 {
+  #card1, #card2, #card3, #card4, #card5, #card6 #card7{
     float: left;
-    width: 16%;
+    width: 14%;
     background-color: #f3cdf1;
     color: rgb(218, 222, 226);
     font-size: 15px;
