@@ -33,7 +33,7 @@ def show_solve():
 
 @app.route('/ask')
 def show_ask():
-    return render_template('index_chatbot.html')
+    return render_template('index.html')
 
 @app.route("/post", methods=['POST'])
 def post():
