@@ -127,7 +127,7 @@ def get_dataframe_from_db():
 def show_db():
     df = get_dataframe_from_db()
     print(df)
-    df.to_csv('./result/question.csv', encoding='ansi')
+    df.to_csv('./result/question.csv', encoding='cp949')
     return render_template('show_db.html', table=df.to_html(classes='table table-striped'))
 
 if __name__ == '__main__':
