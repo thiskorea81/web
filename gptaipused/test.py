@@ -131,4 +131,4 @@ def show_db():
     return render_template('show_db.html', table=df.to_html(classes='table table-striped'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0/0', debug=True)
