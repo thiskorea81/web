@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+    <head>
+        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> 정보교과 프로그래밍 학습 도움 사이트 </title>
+        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"> <!-- JS --> <script src="{{ url_for('static', filename='check_error.js') }}" > </script> 
+    </head>
+
+<body>
+    <main>
+        <header>
+            <h1>정보 수업 Ⅲ.문제해결과 프로그래밍 - 프로그래밍 단원<br></h1>
+        </header>
+
+        <nav role="navigation" id="top_Menu">
+            <ul>
+                <li><a href = "http://minsubak.iptime.org:8000/"  id="homeLink" class="menu_Link" target="_self">🏠HOME</a></li>
+                <li><a href = "https://drive.google.com/drive/folders/16jZUmUlOUoxFy58AZU51mTrA9lomjn7W?usp=sharing"  id="postLink" class="menu_Link" target="show_contents"> 📙학습 자료 받기 </a></li>
+                <li><a href = "/solve"  id="learnLink" class="menu_Link" target="show_contents"> 🤓오류 분석하기 </a></li>
+                <li><a href = "/ask"   id="questionLink" class="menu_Link" target="show_contents"> ❓챗봇에 질문하기 </a></li>
+                <li><a href = "http://minsubak.iptime.org:12345/"  id="postLink" class="menu_Link" target="_blank"> ✍️프로그래밍 문제 풀기 </a></li>
+            </ul>
+        </nav>
+
+        <section>
+            <h1>파이썬 오류 유형 검색</h1>
+
+            <form action="/" method="post" >
+                <fieldset>
+                    <legend>오류 내용 입력창(문장 입력)</legend>
+                        <input type="text" id="resultPrintLabel" name = "resultPrintLabel" required size="100%" placeholder="통합개발환경 등에서 발생한 오류 문구를 복사해서 넣으시면 됩니다. "> 
+                        <input type="button" id="userInputBtn" value="오류 분석하기" onclick="문장분류하기()"> 
+                        <input type="reset" value="입력 취소">         
+                        </div>                                            
+                </fieldset>
+            
+                <fieldset>
+                    <legend>분석된 오류 유형</legend>
+                        <label id="resultPrintLabel" for="resultPrintLabel" name="lp" value="{{ label_value }}">Result:</label>
+                </fieldset>
+            </form>
+            <br/>
+            </section>
+        
+</main>
+
+
+
+</body>
+<footer>
+    
+        <br>🧑‍💻 제작자 : 박민수 | 📧 연락처 : <a href = "mailto:mbak@korea.kr"> mbak@korea.kr </a>
+    
+</footer>
+</html>
