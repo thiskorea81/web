@@ -1,87 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<title>2023 정보 수업</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Playground</title>
+
 <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
 <style>
-    .banner-image {
-        width: 300px;
-        height: 200px;
-        margin: 5px;
-    }
-    #banner-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-    }
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  header, footer {
+    background-color: #333;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+  }
+  nav {
+    background-color: #000000;
+    color: white;
+    padding: 0.5rem;
+    text-align: center;
+  }
+  section {
+    flex-grow: 1;
+    display: flex;
+  }
+  article {
+    flex-grow: 2;
+    padding: 1rem;
+    border-right: 2px solid blue;
+  }
+  iframe {
+    flex-grow: 1;
+  }
 </style>
 </head>
-
 <body>
-    <header>
-        <h2><a href="/">Welcome to Informatics</a></h2>
-    </header>
+    <header>AI Playground w GPT</header>
+    <nav>
+        <a>정보</a>
+        <a>인공지능</a>
+        <a>실습</a>  
+    </nav>
+    <section>
+        
+        
+        <article>본문 내용이 들어갈 부분</article>
+        <!-- 채팅 iframe -->
+        <iframe src="chat.html" name="chat-frame" frameborder="0"></iframe>
+    </section>    
     
-    <div id="cards">
-        <div id="card1">
-            <a href="j1.htm" target="iframe_1">1. 정보 사회</a>
-         </div>
-        <div id="card2">
-            <a href="j2.htm" target="iframe_1">2. 자료와 정보</a>
-        </div>
-        <div id="card3">
-            <a href="j3.htm" target="iframe_1">3. 문제 해결과 프로그래밍</a>
-        </div>
-        <div id="card4">
-            <a href="j4.htm" target="iframe_1">4. 컴퓨팅 시스템</a>
-        </div>
-        <div id="card5">
-            <a href="j5.htm" target="iframe_1">5. 기말대비 대체수업자료</a>
-        </div>
-        <div id="card6">
-            <a href="exer.htm" target="iframe_1">실습</a>
-        </div>
-        <div id="card7">
-            <a href="/ask" target="iframe_1">챗봇에 질문하기</a>
-        </div>
-    </div> 
-    
-    
-    <iframe src="notice.htm" height="610px" width="100%" id="fr01" name="iframe_1" frameborder='0' scrolling="auto">
-    </iframe>
-    
-    
-    <div id="banner-container">
-        <a href="https://form.office.naver.com/form/responseView.cmd?formkey=MzMzMWRjMzEtOTczOC00NjExLWJjOWYtYWY0ZGU5ZTRiYzA0&sourceId=urlshare" target="_blank">
-            <img class="banner-image" src="./img/banner1.jpeg" alt="배너 이미지">
-        </a>
-        <a href="http://playbot.spaceii.com/" target="_blank">
-            <img class="banner-image" src="./img/banner2.jpg" alt="플레이봇">
-        </a>
-        <a href="https://www.bebras.kr/" target="_blank">
-            <img class="banner-image" src="./img/banner3.jpg" alt="비버챌린지">
-        </a>
-        <a href="https://www.ebssw.kr/" target="_blank">
-            <img class="banner-image" src="./img/banner4.jpg" alt="이솦">
-        </a>
-        <a href="https://appinventor.mit.edu/" target="_blank">
-            <img class="banner-image" src="./img/banner5.jpg" alt="앱인벤터">
-        </a>
-        <a href="https://teachablemachine.withgoogle.com/" target="_blank">
-            <img class="banner-image" src="./img/banner6.jpg" alt="티처블머신">
-        </a>
-        <a href="https://www.kaggle.com/" target="_blank">
-            <img class="banner-image" src="./img/banner7.jpg" alt="kaggle">
-        </a>
-    </div>
-
-    <footer>
-    <p>Copyright @ thiskorea. All right reserved.</p>
-    <p>Contact: thiskorea@gmail.com</p>
-    </footer>
-
+    <footer>푸터 영역</footer>
 </body>
 </html>
-
