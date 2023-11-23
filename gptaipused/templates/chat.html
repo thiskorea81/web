@@ -66,7 +66,43 @@
   </div>
 
 <script>
-  // JavaScript 코드를 여기에 추가할 수 있습니다.
+  document.addEventListener('DOMContentLoaded', function() {
+  const sendButton = document.getElementById('send-button');
+  const chatInput = document.getElementById('chat-input');
+  const chatWindow = document.getElementById('chat-window');
+
+  sendButton.addEventListener('click', function() {
+    const message = chatInput.value.trim();
+    if (message) {
+      sendMessage(message);
+      chatInput.value = ''; // 입력 필드 초기화
+      appendMessage(message, 'You');
+    }
+  });
+
+  function sendMessage(message) {
+    fetch('/ask', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 'message': message })
+    })
+    .then(response => response.json())
+    .then(data => {
+      appendMessage(data.response, 'AI');
+    })
+    .catch(error => console.error('Error:', error));
+  }
+
+  function appendMessage(message, sender) {
+    const messageElement = document.createElement('div');
+    messageElement.textContent = `${sender}: ${message}`;
+    chatWindow.appendChild(messageElement);
+    chatWindow.scrollTop = chatWindow.scrollHeight; // 스크롤을 최신 메시지 위치로 이동
+  }
+});
+
 </script>
 </body>
 </html>

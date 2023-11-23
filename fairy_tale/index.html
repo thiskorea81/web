@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>동화책 사이트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .book-cover {
+            max-width: 150px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        .book-cover:hover {
+            transform: scale(1.1);
+        }
+        #story-container {
+            display: none;
+        }
+        #back-button {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+
+<h1>맛깔나게 재밌는 동화</h1>
+
+
+<div id="books-container">
+    <img class="book-cover" src="C:\Users\User\Desktop\단아\2023LPCS\진짜\표지1.jpg" alt="우리의 숲을 돌려줘!" onclick="selectBook(0)">
+    <img class="book-cover" src="C:\Users\User\Desktop\단아\2023LPCS\가짜\표지.jpg" alt="신비한 숲의 친구들" onclick="selectBook(1)">
+    <!-- 다른 동화책들을 필요에 따라 추가 -->
+</div>
+
+
+<div id="story-container">
+    <img id="story-img" src="" alt="동화책 이미지">
+    <audio id="story-audio" controls>
+        <source src="" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+    <button id="next-button" onclick="nextPage()">다음 페이지</button>
+</div>
+
+
+<button id="back-button" onclick="goBack()">뒤로 가기</button>
+
+
+<script>
+    const booksContainer = document.getElementById('books-container');
+    const storyContainer = document.getElementById('story-container');
+    const storyImg = document.getElementById('story-img');
+    const storyAudio = document.getElementById('story-audio');
+    const nextButton = document.getElementById('next-button');
+    const backButton = document.getElementById('back-button');
+
+
+    // 동화책 정보를 담은 객체 배열
+    const books = [
+        {
+            cover: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\표지1.jpg',
+            pages: [
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.1.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면1.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.2.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면2.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.3.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면3.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.4.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면4.wav'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.5.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면5.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.6.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면6.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.7.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면7.wav'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.8.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면8.wav'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.9.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면9.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.10.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면10.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.11.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면11.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.12.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면12.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.13.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면13.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.14.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면14.wav'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.15.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면15.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.16.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면16.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\장면.17.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\진짜\엔딩_해설.m4a'
+            }
+                // 추가 페이지들을 필요에 따라 계속 추가할 수 있습니다.
+            ]
+        },
+        {
+            cover: 'C:\Users\User\Desktop\단아\2023LPCS\가짜\표지.jpg'
+            pages: [
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\가짜\색깔동굴2.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\가짜\색1.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\가짜\색깔동굴3.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\가짜\색2.mp3'
+            },
+            {
+                image: 'C:\Users\User\Desktop\단아\2023LPCS\가짜\색깔동굴4.jpg',
+                audio: 'C:\Users\User\Desktop\단아\2023LPCS\가짜\색3.mp3'
+            }
+            ]
+        }
+        // 다른 동화책들을 필요에 따라 추가
+    ];
+
+
+    let currentBookIndex = -1; // -1은 아무 책도 선택되지 않은 상태를 나타냅니다.
+    let currentPageIndex = 0;
+
+
+    // 동화책 선택 시 호출되는 함수
+    function selectBook(index) {
+        currentBookIndex = index;
+        showStoryPage();
+        updateUI();
+    }
+
+
+    // 첫 페이지로 이동하는 함수
+    function showStoryPage() {
+        currentPageIndex = 0;
+        updateUI();
+    }
+
+
+    // 다음 페이지로 이동하는 함수
+    function nextPage() {
+        currentPageIndex++;
+
+
+        if (currentPageIndex === books[currentBookIndex].pages.length) {
+            // 동화의 마지막 페이지인 경우
+            currentBookIndex = -1;
+            showBooks();
+        } else {
+            updateUI();
+        }
+    }
+
+
+    // 동화책 선택 화면 표시
+    function showBooks() {
+        booksContainer.style.display = 'block';
+        storyContainer.style.display = 'none';
+        backButton.style.display = 'none';
+    }
+
+
+    // 동화 내용 화면 표시
+    function showStory() {
+        booksContainer.style.display = 'none';
+        storyContainer.style.display = 'block';
+        backButton.style.display = 'block';
+    }
+
+
+    // UI 업데이트 함수
+    function updateUI() {
+        if (currentBookIndex !== -1) {
+            // 동화책이 선택된 경우
+            const currentPage = books[currentBookIndex].pages[currentPageIndex];
+            storyImg.src = currentPage.image;
+            storyAudio.src = currentPage.audio;
+            showStory();
+        } else {
+            // 동화책 선택 화면인 경우
+            showBooks();
+        }
+    }
+
+
+    // 뒤로 가기 함수
+    function goBack() {
+        currentBookIndex = -1;
+        showBooks();
+    }
+
+
+    // 초기 로딩 시 동화책 선택 화면 표시
+    showBooks();
+</script>
+
+
+</body>
+</html>

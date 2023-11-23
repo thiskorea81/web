@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Playground</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    height: 100%;
+    background-color: #f5f5f5;
+  }
+  #main-container {
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  .header {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+  #chat-section {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex-grow: 1; /* 섹션을 전체 공간에 채우도록 합니다 */
+  }
+  #chat-window {
+    height: 600px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 20px;
+    background-color: #fafafa;
+  }
+  #chat-input {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px;
+  }
+  #send-button {
+    padding: 10px 20px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    margin: 10px;
+  }
+</style>
+</head>
+<body>
+  <div id="main-container">
+    <div id="chat-section">
+      <div id="chat-window">
+        <!-- 채팅 메시지가 표시될 부분 -->
+      </div>
+      <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off">
+      <button id="send-button">보내기</button>
+    </div>
+  </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  const sendButton = document.getElementById('send-button');
+  const chatInput = document.getElementById('chat-input');
+  const chatWindow = document.getElementById('chat-window');
+
+  // 엔터 키 이벤트 리스너를 추가합니다.
+  chatInput.addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') { // 엔터 키를 감지합니다.
+      sendButton.click(); // 보내기 버튼의 클릭 이벤트를 발생시킵니다.
+    }
+  });
+
+  sendButton.addEventListener('click', function() {
+    const message = chatInput.value.trim();
+    if (message) {
+      sendMessage(message);
+      chatInput.value = ''; // 입력 필드 초기화
+      appendMessage(message, 'You');
+    }
+  });
+
+  function sendMessage(message) {
+    fetch('/ask', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 'message': message })
+    })
+    .then(response => response.json())
+    .then(data => {
+      appendMessage(data.response, 'AI');
+    })
+    .catch(error => console.error('Error:', error));
+  }
+
+  function appendMessage(message, sender) {
+    const messageElement = document.createElement('div');
+    messageElement.textContent = `${sender}: ${message}`;
+    chatWindow.appendChild(messageElement);
+    chatWindow.scrollTop = chatWindow.scrollHeight; // 스크롤을 최신 메시지 위치로 이동
+  }
+});
+
+</script>
+</body>
+</html>
