@@ -35,39 +35,25 @@
     padding: 1rem;
   }
   article {
-    width: 45%; /* article에 대한 너비 설정 */
+    width: 90%; /* article에 대한 너비 설정 */
     padding: 1rem;
-    border-right: 2px solid blue; /* article의 우측 테두리 설정 */
-  }
-  iframe {
-    width: 45%; /* iframe의 너비 설정 */
-    height: 100%; /* iframe의 높이 설정 */
-    border: none; /* iframe의 테두리 제거 */
   }
 </style>
 </head>
 <body>
-    <header>AI Playground w GPT</header>
-    <nav>
-        <a href="{{ url_for('index') }}">[HOME]</a>        
-        <a href="{{ url_for('info') }}">[정보]</a>
-        <a href="{{ url_for('ai') }}">[인공지능]</a>
-        <a href="{{ url_for('exercise') }}">[실습]</a>  
-    </nav>
     <section>
         <aside>
             <!-- aside의 메뉴 아이템 -->
-            <a href="#">입출력</a><br>
-            <a href="#">선택조건문</a><br>
-            <a href="#">반복문</a><br>
+            <a href="#">메뉴 항목 1</a><br>
+            <a href="#">메뉴 항목 2</a><br>
+            <a href="#">메뉴 항목 3</a><br>
         </aside>
         <article>
             <!-- article의 내용 -->
-            본문 내용이 들어갈 부분 010101
+            본문 내용이 들어갈 부분
         </article>
         <!-- iframe 설정 -->
-        <iframe src="{{ url_for('static', filename='chat.html') }}" name="chat-frame"></iframe>
-    </section>    
-    <footer>푸터 영역</footer>
+        <!--<iframe src="{{ url_for('static', filename='chat.html') }}" name="chat-frame"></iframe>-->
+    </section>
 </body>
 </html>

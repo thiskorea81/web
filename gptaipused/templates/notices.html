@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>공지사항 목록</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='notice_style.css') }}">
+</head>
+<body>
+    <h1>공지사항 목록</h1>
+    <ul>
+        {% for notice in notices %}
+        <li>
+            <h3>{{ notice.title }}</h3>
+            <p>{{ notice.content }}</p>
+            <small>게시일: {{ notice.date }}</small>
+        </li>
+        {% else %}
+        <li>공지사항이 없습니다.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

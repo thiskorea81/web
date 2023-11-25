@@ -35,25 +35,13 @@
     padding: 1rem;
   }
   article {
-    width: 45%; /* article에 대한 너비 설정 */
+    width: 90%; /* article에 대한 너비 설정 */
     padding: 1rem;
-    border-right: 2px solid blue; /* article의 우측 테두리 설정 */
   }
-  iframe {
-    width: 45%; /* iframe의 너비 설정 */
-    height: 100%; /* iframe의 높이 설정 */
-    border: none; /* iframe의 테두리 제거 */
-  }
+  
 </style>
 </head>
 <body>
-    <header>AI Playground w GPT</header>
-    <nav>
-        <a href="{{ url_for('index') }}">[HOME]</a>        
-        <a href="{{ url_for('info') }}">[정보]</a>
-        <a href="{{ url_for('ai') }}">[인공지능]</a>
-        <a href="{{ url_for('exercise') }}">[실습]</a>  
-    </nav>
     <section>
         <aside>
             <!-- aside의 메뉴 아이템 -->
@@ -67,9 +55,9 @@
             본문
         </article>
         <!-- iframe 설정 -->
-        <iframe src="{{ url_for('static', filename='chat.html') }}" name="chat-frame"></iframe>
+        <!--<iframe src="{{ url_for('static', filename='chat.html') }}" name="chat-frame"></iframe>-->
     </section>    
-    <footer>copyright@ thiskorea</footer>
+    
 
         <!-- JavaScript를 추가합니다. -->
         <script>

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}공지사항 수정{% endblock %}
+
+{% block content %}
+<h1>공지사항 수정</h1>
+<form method="post" action="/update/{{ notice.id }}">
+    <label for="title">제목:</label>
+    <input type="text" id="title" name="title" value="{{ notice.title }}"><br>
+    <label for="content">내용:</label>
+    <textarea id="content" name="content">{{ notice.content }}</textarea><br>
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}

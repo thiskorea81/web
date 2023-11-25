@@ -22,8 +22,18 @@
   nav {
     background-color: #000000;
     color: white;
-    padding: 0.5rem;
-    text-align: left;
+    padding: 3rem;
+    text-align: center;
+    font-size:xx-large ;
+  }
+  nav a {
+    color: white; /* 링크 색상을 흰색으로 설정 */
+    text-decoration: none; /* 링크 밑줄 제거 */
+  }
+
+  nav a:hover {
+    color: yellow; /* 마우스 오버 시에도 링크 색상을 흰색으로 유지 */
+    text-decoration: none; /* 마우스 오버 시 밑줄 제거 */
   }
   section {
     flex-grow: 1;
@@ -32,17 +42,24 @@
   article {
     flex-grow: 2;
     padding: 1rem;
-    border-right: 2px solid blue;
+    
   }
   /* iframe에 대한 스타일 */
   iframe {
-    flex-grow: 1;
-    width: 30%; /* iframe의 너비를 조정 */
     height: 80%; /* iframe의 높이를 조정 */
     border: none; /* iframe 테두리 제거 */
     overflow: hidden; /* 넘치는 콘텐츠 숨기기 */
   }
 
+  /* main iframe에 대한 스타일 */
+  iframe[name="main"] {
+    flex-grow: 7; /* main iframe의 크기를 전체의 60%로 설정 */
+  }
+  
+  /* chat-frame iframe에 대한 스타일 */
+  iframe[name="chat-frame"] {
+    flex-grow: 3; /* chat iframe의 크기를 전체의 40%로 설정 */
+  }
 </style>
 </head>
 <body>
@@ -50,17 +67,19 @@
     <nav>
         <!-- 각 페이지로의 링크를 설정합니다. -->
         <a href="{{ url_for('index') }}">[HOME]</a>        
-        <a href="{{ url_for('info') }}">[정보]</a>
-        <a href="{{ url_for('ai') }}">[인공지능]</a>
-        <a href="{{ url_for('exercise') }}">[실습]</a>  
-        <a href="{{ url_for('show_db') }}">[DB]</div></a>  
+        <a href="https://wikidocs.net/book/1" target="main">[파이썬]</a>
+        <a href="{{ url_for('nav2') }}" target="main">[인공지능]</a>
+        <a href="https://this.codeth.kr" target="_blank">[실습]</a>  
     </nav>
     <section>
-        <article>본문 내용이 들어갈 부분</article>
+        <iframe src="{{ url_for('main') }}" name="main" frameborder="0"></iframe>
+        
         <!-- 채팅 iframe -->
         <iframe src="{{ url_for('static', filename='chat.html') }}" name="chat-frame" frameborder="0"></iframe>
     </section>    
     
-    <footer>푸터 영역</footer>
+    <footer>
+      copyright@ thiskorea
+    </footer>
 </body>
 </html>

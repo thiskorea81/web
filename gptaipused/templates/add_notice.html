@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>공지사항 추가</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='notice_style.css') }}">
+</head>
+<body>
+    <h1>공지사항 추가</h1>
+    <form method="post" action="/add">
+        <label for="title">제목:</label>
+        <input type="text" id="title" name="title"><br>
+        <label for="content">내용:</label>
+        <textarea id="content" name="content"></textarea><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

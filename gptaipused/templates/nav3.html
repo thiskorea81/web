@@ -47,13 +47,6 @@
 </style>
 </head>
 <body>
-    <header>AI Playground w GPT</header>
-    <nav>
-        <a href="{{ url_for('index') }}">[HOME]</a>        
-        <a href="{{ url_for('info') }}">[정보]</a>
-        <a href="{{ url_for('ai') }}">[인공지능]</a>
-        <a href="{{ url_for('exercise') }}">[실습]</a>  
-    </nav>
     <section>
         <aside>
             <!-- aside의 메뉴 아이템 -->
@@ -66,7 +59,7 @@
             본문 내용이 들어갈 부분
         </article>
         <!-- iframe 설정 -->
-        <iframe src="{{ url_for('static', filename='chat.html') }}" name="chat-frame"></iframe>
+        <!--<iframe src="{{ url_for('static', filename='chat.html') }}" name="chat-frame"></iframe>-->
     </section>    
     <footer>푸터 영역</footer>
 </body>
