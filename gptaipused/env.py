@@ -1,1 +1,1 @@
-API_KEY = input()
+API_KEY = ''

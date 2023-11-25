@@ -9,7 +9,9 @@
     <div class="container">
         <h1>DataFrame in Local DB</h1>
 
-
+        <!-- 내보내기 버튼 -->
+        <a href="{{ url_for('export') }}" class="btn btn-primary">Export to CSV</a>
+        
         <table class="table table-striped">
             {{ table|safe }}
         </table>

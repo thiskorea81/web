@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Playground</title>
+<title>AI Assistant</title>
 <style>
   body {
     font-family: 'Arial', sans-serif;
@@ -26,6 +26,11 @@
     color: white;
     padding: 20px;
     text-align: center;
+  }
+  /* chat.html 내부의 CSS 파일에서 */
+  .chat-message {
+    word-wrap: break-word; /* 긴 단어나 코드가 넘칠 경우 줄바꿈을 적용 */
+    overflow-wrap: break-word; /* 긴 단어가 넘칠 경우 강제로 줄바꿈을 적용 */
   }
   #chat-section {
     display: flex;
@@ -71,10 +76,9 @@
   const chatInput = document.getElementById('chat-input');
   const chatWindow = document.getElementById('chat-window');
 
-  // 엔터 키 이벤트 리스너를 추가합니다.
   chatInput.addEventListener('keyup', function(event) {
-    if (event.key === 'Enter') { // 엔터 키를 감지합니다.
-      sendButton.click(); // 보내기 버튼의 클릭 이벤트를 발생시킵니다.
+    if (event.key === 'Enter') {
+      sendButton.click();
     }
   });
 
@@ -82,7 +86,7 @@
     const message = chatInput.value.trim();
     if (message) {
       sendMessage(message);
-      chatInput.value = ''; // 입력 필드 초기화
+      chatInput.value = '';
       appendMessage(message, 'You');
     }
   });
@@ -95,20 +99,50 @@
       },
       body: JSON.stringify({ 'message': message })
     })
-    .then(response => response.json())
-    .then(data => {
-      appendMessage(data.response, 'AI');
+    .then(response => {
+      // 서버 응답이 정상인지 확인합니다.
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+      return response.json();
     })
-    .catch(error => console.error('Error:', error));
+    .then(data => {
+      // 'response' 키가 있는지 확인하고 메시지를 추가합니다.
+      if(data.response) {
+        appendMessage(data.response, 'AI');
+      } else {
+        // 데이터에 'response' 키가 없을 경우 로그를 기록합니다.
+        console.error('Response from server does not contain \'response\' key:', data);
+        appendMessage('Error: Invalid response from server.', 'AI');
+      }
+    })
+    .catch(error => {
+      // 네트워크 오류나 JSON 파싱 오류를 콘솔에 로그합니다.
+      console.error('Fetch error:', error);
+      appendMessage('Error: Could not communicate with AI.', 'AI');
+    });
   }
 
   function appendMessage(message, sender) {
     const messageElement = document.createElement('div');
-    messageElement.textContent = `${sender}: ${message}`;
+    const preElement = document.createElement('pre'); // 코드를 위한 태그
+    const codeElement = document.createElement('code'); // 코드를 위한 태그
+
+    if (sender === 'AI') {
+        // AI의 응답을 코드로 간주하고 pre > code 구조로 추가합니다.
+        codeElement.textContent = message;
+        preElement.appendChild(codeElement);
+        messageElement.appendChild(preElement);
+    } else {
+        // 사용자 메시지는 일반 텍스트로 처리합니다.
+        messageElement.textContent = `${sender}: ${message}`;
+    }
+
     chatWindow.appendChild(messageElement);
-    chatWindow.scrollTop = chatWindow.scrollHeight; // 스크롤을 최신 메시지 위치로 이동
+    chatWindow.scrollTop = chatWindow.scrollHeight;
   }
 });
+
 
 </script>
 </body>
