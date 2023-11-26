@@ -13,33 +13,12 @@
     flex-direction: column;
     height: 100vh;
   }
-  header, footer {
-    background-color: #333;
-    color: white;
-    padding: 1rem;
-    text-align: center;
-  }
-  nav {
-    background-color: #000;
-    color: white;
-    padding: 0.5rem;
-    text-align: left;
-  }
   section {
     flex: 1;
     display: flex; /* flex 레이아웃 설정 */
   }
-  aside {
-    width: 10%; /* aside에 대한 너비 설정 */
-    background-color: #f4f4f4; /* 배경색 설정 */
-    padding: 1rem;
-  }
-  article {
-    width: 45%; /* article에 대한 너비 설정 */
-    padding: 1rem;
-  }
   iframe {
-    height: 100%; /* iframe의 높이 설정 */
+    height: 100vh; /* iframe의 높이 설정 */
     border: none; /* iframe의 테두리 제거 */
   }
   iframe[name="python"] {
@@ -53,6 +32,14 @@
   }
   
 </style>
+
+<script>
+  window.addEventListener('load', function() {
+  var iframe = document.getElementById('your-iframe-id');
+  iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+});
+
+</script>
 </head>
 <body>
     <section>
@@ -60,37 +47,5 @@
         <!-- iframe 설정 -->
         <iframe src="{{ url_for('static', filename='chat_code.html') }}" name="chat-frame"></iframe>
     </section>    
-    
-
-        <!-- JavaScript를 추가합니다. -->
-        <script>
-          // AJAX를 사용하여 내용을 로드하는 함수입니다.
-          function loadContent(file) {
-              var xhr = new XMLHttpRequest();
-              xhr.open('GET', file, true);
-              xhr.onreadystatechange = function() {
-                  if (this.readyState === 4 && this.status === 200) {
-                      // article 요소에 로드된 내용을 설정합니다.
-                      document.getElementById('content').innerHTML = this.responseText;
-                  }
-              };
-              xhr.send();
-          }
-  
-          // aside의 각 링크에 클릭 이벤트 리스너를 추가하는 함수입니다.
-          function setupMenuItems() {
-              var links = document.querySelectorAll('aside a[data-file]');
-              links.forEach(function(link) {
-                  link.addEventListener('click', function(e) {
-                      e.preventDefault(); // 기본 이벤트를 취소합니다.
-                      var file = this.getAttribute('data-file'); // 연결된 파일의 경로를 가져옵니다.
-                      loadContent(file); // AJAX 함수를 호출하여 내용을 로드합니다.
-                  });
-              });
-          }
-  
-          // 문서 로딩이 끝나면 함수를 실행합니다.
-          window.onload = setupMenuItems;
-      </script>
 </body>
 </html>
