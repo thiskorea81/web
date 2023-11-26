@@ -1,17 +1,16 @@
 from flask import Flask, request, jsonify, render_template, send_file
 from datetime import datetime
-import openai
+from openai import OpenAI
 import os
 import sqlite3 as sq
 import pandas as pd
-#import env
 
 app = Flask(__name__)
 
 # OpenAI API 키를 환경변수에서 가져옵니다.
 # 환경변수에 'OPENAI_API_KEY'로 저장되어 있어야 합니다.
-openai.api_key = os.getenv('OPENAI_API_KEY')
-# openai.api_key=env.API_KEY
+client1 = OpenAI()      # 코드 해석
+client2 = OpenAI()      # 수학 문제 풀이
 
 #LOCAL DB 연결
 def create_connection():
@@ -34,8 +33,8 @@ print("Table created successfully")
 c.close() #커서 종료
 conn.close() #커넥션 종료
 
-@app.route('/ask', methods=['POST'])
-def ask():
+@app.route('/ask_code', methods=['POST'])
+def ask_code():
     stuNum = '1111'
     stuName = '홍길동'
     data = request.json
@@ -43,36 +42,160 @@ def ask():
     ca = '정확한 답은 알려주지 말고 힌트로 제공해줘.'
     messages = []
     user_message = kor+data['message']+ca
-    messages.append({"role": "user", "content": f"{user_message}"})
+
+    assistant = client1.beta.assistants.create(
+        name = "Code Interpreter",
+        model="gpt-3.5-turbo",  # 사용할 모델을 지정합니다.
+        instructions="You are a personal code interpreter. Write and run code to answer python questions.",
+        tools=[{"type": "code_interpreter"}],  # 필요한 도구를 지정합니다.
+    )
+    
+    # 새로운 대화를 위한 Thread를 생성합니다.
+    thread = client1.beta.threads.create()
+
+    # 사용자의 메시지를 Thread에 추가합니다.
+    message = client1.beta.threads.messages.create(
+        thread_id=thread.id,
+        role="user",
+        content=user_message
+    )
+
     try:
-        response = openai.chat.completions.create(
-            model="gpt-4",  # 코드 해석을 위한 모델을 지정하세요.
-            messages=[{"role": "user", 
-                       "content": user_message,},],
+        # Assistant를 실행합니다.
+        run = client1.beta.threads.runs.create(
+            assistant_id=assistant.id,
+            thread_id=thread.id,
         )
 
-        # 응답에서 코드를 추출하고 형식을 잘 구성합니다.
-        code_response = response.choices[0].message.content
-        formatted_code = f'Assistant:\n{code_response}\n'  # Markdown 형식으로 코드 블록을 생성합니다.
+        # Assistant의 응답을 받아옵니다.
+        while True:
+            if run.status == "completed":
+                break
+            run = client1.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
 
-        #db호출   # 민수쌤 코드
-        conn, c = create_connection()
+        # Assistant의 응답을 확인합니다.
+        messages = client1.beta.threads.messages.list(
+            thread_id=thread.id
+        )
+        
+        # 사용자에게 보낼 메시지를 결정합니다.
+        if messages.data:
+            # value 값을 저장할 변수
+            response_content = ""
 
-        c.execute("insert into stuQuestions(stuNum, stuName, stuAsk, chatbotAnswer) values(?,?,?,?)",(stuNum, stuName, user_message, code_response))
-        c.fetchall()
+            # messages.data의 각 ThreadMessage 객체에 대해 반복
+            for message in messages.data:
+                # 각 메시지의 content 속성에 대해 반복
+                for content in message.content:
+                    if content.type == 'text':
+                        # 'text' 유형의 content에서 'value' 값을 추출하여 저장
+                        response_content = content.text.value
+                        break  # 첫 번째 'text' 유형의 content를 찾으면 반복 중단
+                if response_content:
+                    break  # 'value' 값을 찾으면 바깥쪽 반복도 중단
+            
+            # 응답에서 코드를 추출하고 형식을 잘 구성합니다.
+            code_response = response_content
+            formatted_code = f'Assistant:\n{code_response}\n'  # Markdown 형식으로 코드 블록을 생성합니다.
+            #db호출   # 민수쌤 코드
+            conn, c = create_connection()
+            c.execute("insert into stuQuestions(stuNum, stuName, stuAsk, chatbotAnswer) values(?,?,?,?)",
+                  (stuNum, stuName, user_message, code_response))
+            c.fetchall()
+            conn.commit()
+            # 다 사용한 커서 객체를 종료할 때
+            c.close()
+            # 연결 리소스를 종료할 때
+            conn.close()
 
-        conn.commit()
+            return jsonify({'response': response_content}), 200
 
-        # 다 사용한 커서 객체를 종료할 때
-        c.close()
-
-        # 연결 리소스를 종료할 때
-        conn.close()
-
-        return jsonify({'response': formatted_code}), 200
     except Exception as e:
+        # 로그에 에러를 출력합니다.
         app.logger.error(f'An error occurred: {str(e)}')
-        return jsonify({'error': 'An internal error occurred: {str(e)}'}), 500
+        return jsonify({'error': 'An internal error occurred.'}), 500
+
+@app.route('/ask_math', methods=['POST'])
+def ask_math():
+    stuNum = '1111'
+    stuName = '홍길동'
+    data = request.json
+    kor = '한글로 답해주고, '
+    # ca = '정확한 답은 알려주지 말고 힌트로 제공해줘.'
+    messages = []
+    user_message = kor+data['message']
+
+    assistant = client2.beta.assistants.create(
+        name = "Code Interpreter",
+        model="gpt-3.5-turbo",  # 사용할 모델을 지정합니다.
+        instructions="You are a personal math tutor. Write and run code to answer math questions.",
+        tools=[{"type": "code_interpreter"}],  # 필요한 도구를 지정합니다.
+    )
+    
+    # 새로운 대화를 위한 Thread를 생성합니다.
+    thread = client2.beta.threads.create()
+
+    # 사용자의 메시지를 Thread에 추가합니다.
+    message = client2.beta.threads.messages.create(
+        thread_id=thread.id,
+        role="user",
+        content=user_message
+    )
+
+    try:
+        # Assistant를 실행합니다.
+        run = client2.beta.threads.runs.create(
+            assistant_id=assistant.id,
+            thread_id=thread.id,
+        )
+
+        # Assistant의 응답을 받아옵니다.
+        while True:
+            if run.status == "completed":
+                break
+            run = client2.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
+
+        # Assistant의 응답을 확인합니다.
+        messages = client2.beta.threads.messages.list(
+            thread_id=thread.id
+        )
+        
+        # 사용자에게 보낼 메시지를 결정합니다.
+        if messages.data:
+            # value 값을 저장할 변수
+            response_content = ""
+
+            # messages.data의 각 ThreadMessage 객체에 대해 반복
+            for message in messages.data:
+                # 각 메시지의 content 속성에 대해 반복
+                for content in message.content:
+                    if content.type == 'text':
+                        # 'text' 유형의 content에서 'value' 값을 추출하여 저장
+                        response_content = content.text.value
+                        break  # 첫 번째 'text' 유형의 content를 찾으면 반복 중단
+                if response_content:
+                    break  # 'value' 값을 찾으면 바깥쪽 반복도 중단
+            
+            # 응답에서 코드를 추출하고 형식을 잘 구성합니다.
+            code_response = response_content
+            formatted_code = f'Assistant:\n{code_response}\n'  # Markdown 형식으로 코드 블록을 생성합니다.
+            #db호출   # 민수쌤 코드
+            conn, c = create_connection()
+            c.execute("insert into stuQuestions(stuNum, stuName, stuAsk, chatbotAnswer) values(?,?,?,?)",
+                  (stuNum, stuName, user_message, code_response))
+            c.fetchall()
+            conn.commit()
+            # 다 사용한 커서 객체를 종료할 때
+            c.close()
+            # 연결 리소스를 종료할 때
+            conn.close()
+
+            return jsonify({'response': response_content}), 200
+
+    except Exception as e:
+        # 로그에 에러를 출력합니다.
+        app.logger.error(f'An error occurred: {str(e)}')
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 def get_dataframe_from_db():
     #db호출

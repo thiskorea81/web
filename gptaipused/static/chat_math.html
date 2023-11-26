@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Assistant</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    height: 100%;
+    background-color: #f5f5f5;
+  }
+  #main-container {
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  .header {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+  /* chat.html 내부의 CSS 파일에서 */
+  .chat-message {
+    word-wrap: break-word; /* 긴 단어나 코드가 넘칠 경우 줄바꿈을 적용 */
+    overflow-wrap: break-word; /* 긴 단어가 넘칠 경우 강제로 줄바꿈을 적용 */
+  }
+  #chat-section {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex-grow: 1; /* 섹션을 전체 공간에 채우도록 합니다 */
+  }
+  #chat-window {
+    height: 600px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 20px;
+    background-color: #fafafa;
+  }
+  #chat-input {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px;
+  }
+  #send-button {
+    padding: 10px 20px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    margin: 10px;
+  }
+</style>
+</head>
+<body>
+  <div id="main-container">
+    <div id="chat-section">
+      <div id="chat-window">
+        <!-- 채팅 메시지가 표시될 부분 -->
+      </div>
+      <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off">
+      <button id="send-button">보내기</button>
+    </div>
+  </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  const sendButton = document.getElementById('send-button');
+  const chatInput = document.getElementById('chat-input');
+  const chatWindow = document.getElementById('chat-window');
+
+  chatInput.addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') {
+      sendButton.click();
+    }
+  });
+
+  sendButton.addEventListener('click', function() {
+    const message = chatInput.value.trim();
+    if (message) {
+      sendMessage(message);
+      chatInput.value = '';
+      appendMessage(message, 'You');
+    }
+  });
+
+  function sendMessage(message) {
+    fetch('/ask_math', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 'message': message })
+    })
+    .then(response => {
+      // 서버 응답이 정상인지 확인합니다.
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+      return response.json();
+    })
+    .then(data => {
+      // 'response' 키가 있는지 확인하고 메시지를 추가합니다.
+      if(data.response) {
+        appendMessage(data.response, 'AI');
+      } else {
+        // 데이터에 'response' 키가 없을 경우 로그를 기록합니다.
+        console.error('Response from server does not contain \'response\' key:', data);
+        appendMessage('Error: Invalid response from server.', 'AI');
+      }
+    })
+    .catch(error => {
+      // 네트워크 오류나 JSON 파싱 오류를 콘솔에 로그합니다.
+      console.error('Fetch error:', error);
+      appendMessage('Error: Could not communicate with AI.', 'AI');
+    });
+  }
+
+  function appendMessage(message, sender) {
+    const messageElement = document.createElement('div');
+    const preElement = document.createElement('pre'); // 코드를 위한 태그
+    const codeElement = document.createElement('code'); // 코드를 위한 태그
+
+    if (sender === 'AI') {
+        // AI의 응답을 코드로 간주하고 pre > code 구조로 추가합니다.
+        codeElement.textContent = message;
+        preElement.appendChild(codeElement);
+        messageElement.appendChild(preElement);
+    } else {
+        // 사용자 메시지는 일반 텍스트로 처리합니다.
+        messageElement.textContent = `${sender}: ${message}`;
+    }
+
+    chatWindow.appendChild(messageElement);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+});
+
+
+</script>
+</body>
+</html>

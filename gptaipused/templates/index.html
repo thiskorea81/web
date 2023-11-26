@@ -67,7 +67,7 @@
     <nav>
         <!-- 각 페이지로의 링크를 설정합니다. -->
         <a href="{{ url_for('index') }}">[HOME]</a>        
-        <a href="https://wikidocs.net/book/1" target="main">[파이썬]</a>
+        <a href="{{ url_for('nav1') }}" target="main">[파이썬]</a>
         <a href="{{ url_for('nav2') }}" target="main">[인공지능]</a>
         <a href="https://this.codeth.kr" target="_blank">[실습]</a>  
     </nav>
@@ -75,7 +75,7 @@
         <iframe src="{{ url_for('main') }}" name="main" frameborder="0"></iframe>
         
         <!-- 채팅 iframe -->
-        <iframe src="{{ url_for('static', filename='chat.html') }}" name="chat-frame" frameborder="0"></iframe>
+        <!--<iframe src="{{ url_for('static', filename='chat_code.html') }}" name="chat-frame" frameborder="0"></iframe>-->
     </section>    
     
     <footer>

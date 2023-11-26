@@ -35,27 +35,30 @@
     padding: 1rem;
   }
   article {
-    width: 90%; /* article에 대한 너비 설정 */
+    width: 45%; /* article에 대한 너비 설정 */
     padding: 1rem;
+  }
+  iframe {
+    height: 100%; /* iframe의 높이 설정 */
+    border: none; /* iframe의 테두리 제거 */
+  }
+  iframe[name="python"] {
+    flex-grow: 5.5; /* 전체 공간의 55% 할당 */
+    /* 필요에 따라 iframe의 다른 스타일을 추가할 수 있습니다. */
+  }
+
+  iframe[name="chat-frame"] {
+    flex-grow: 4.5; /* 전체 공간의 45% 할당 */
+    /* 필요에 따라 iframe의 다른 스타일을 추가할 수 있습니다. */
   }
   
 </style>
 </head>
 <body>
     <section>
-        <aside>
-            <!-- aside의 메뉴 아이템 -->
-            <!-- 각 링크에 data-file 속성을 추가하여 연결된 파일을 지정합니다. -->
-            <a href="/contents/01_01.html" data-file="/contents/01_01.html">입출력</a><br>
-            <a href="#" data-file="contents/01_02.html">선택조건문</a><br>
-            <a href="#" data-file="contents/01_03.html">반복문</a><br>
-        </aside>
-        <article>
-            <!-- article의 내용이 동적으로 변경됩니다. -->
-            본문
-        </article>
+        <iframe src="https://wikidocs.net/book/1" name="python"></iframe>  
         <!-- iframe 설정 -->
-        <!--<iframe src="{{ url_for('static', filename='chat.html') }}" name="chat-frame"></iframe>-->
+        <iframe src="{{ url_for('static', filename='chat_code.html') }}" name="chat-frame"></iframe>
     </section>    
     
 

@@ -35,8 +35,13 @@
     padding: 1rem;
   }
   article {
-    width: 90%; /* article에 대한 너비 설정 */
+    width: 45%; /* article에 대한 너비 설정 */
     padding: 1rem;
+  }
+  iframe {
+    width: 45%; /* iframe의 너비 설정 */
+    height: 100%; /* iframe의 높이 설정 */
+    border: none; /* iframe의 테두리 제거 */
   }
 </style>
 </head>
@@ -53,7 +58,7 @@
             본문 내용이 들어갈 부분
         </article>
         <!-- iframe 설정 -->
-        <!--<iframe src="{{ url_for('static', filename='chat.html') }}" name="chat-frame"></iframe>-->
+        <iframe src="{{ url_for('static', filename='chat_math.html') }}" name="chat-frame"></iframe>
     </section>
 </body>
 </html>
